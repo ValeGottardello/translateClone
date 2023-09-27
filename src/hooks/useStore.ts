@@ -16,42 +16,56 @@ function reducer (state: State, action: Action) {
   const { type } =  action 
  
   if (type === 'INTERCHANGE_LANGUAGES') {
-
+    const loading = state.formText !== ""
     //we avoid do it this logic in the component
     if (state.fromLanguage === AUTO_LANGUAGE) return state
 
     return {
       ...state,
+      loading,
+      result: '',
       fromLanguage: state.toLanguage,
       toLanguage: state.fromLanguage
     }
     //returing new state 
   }
   if ( type === 'SET_FROM_LANGUAGE') {
+    if (state.fromLanguage === action.payload) return state
+    const loading = state.formText !== ""
+    
     return {
       ...state,
       fromLanguage: action.payload, //payloads the information that with what I want to change and update the new state
+      result: '',
+      loading
     }
     
   }
   if ( type === 'SET_TO_LANGUAGE') {
+    if (state.toLanguage === action.payload) return state
+    const loading = state.formText !== ""
+
     return {
       ...state,
-      toLanguage: action.payload, //payloads the information that with what I want to change and update the new state
+      toLanguage: action.payload, 
+      result: '',
+      loading
     }
   }
   if ( type === 'SET_FORM_TEXT') {
+    const loading = action.payload !== ""
+
     return {
       ...state,
-      loading: true,
-      formText: action.payload, //payloads the information that with what I want to change and update the new state
+      loading,
+      formText: action.payload, 
     }
   }
   if ( type === 'SET_RESULT') {
     return {
       ...state,
       loading: false,
-      result: action.payload, //payloads the information that with what I want to change and update the new state
+      result: action.payload, 
     }
   }
   return state

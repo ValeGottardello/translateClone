@@ -1,44 +1,122 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css'
+import { useDebounce } from './hooks/useDebounce'
 import { useStore } from './hooks/useStore';
-import { Container, Row, Col, Button } from 'react-bootstrap';
-import { AUTO_LANGUAGE } from './constants';
+import { Container, Row, Col, Button, Stack} from 'react-bootstrap';
+import { AUTO_LANGUAGE, VOICE_FOR_LANGUAGES } from './constants';
 import LanguageSelector from './components/LanguageSelector';
+import { SectionType } from './types.d';
+import { ArrowIcon, ClipBoardIcon, SpeakerIcon } from './components/Icons'
+import { TextArea } from './components/TextArea';
+import { endPoint } from './utils/endPoints'
 
 function App() {
-  const [count, setCount] = useState(0)
   //3. usar el hook useReducer
   // devuelve state and dispatch  4.5
-  const {fromLanguage, toLanguage, interchangeLanguages, setFromLanguage, setToLanguage} = useStore()
+  const {fromLanguage,
+    toLanguage,
+    interchangeLanguages,
+    setFromLanguage,
+    setToLanguage,
+    formText,
+    result,
+    setFormText,
+    setResult,
+    loading} = useStore()
 
-  return (
+    const debouncedFormText = useDebounce(formText,250)
+
+    useEffect(() => {
+      if (debouncedFormText === '') return;
+     
+      const fetchData = async () => {
+        try {
+          const result = await endPoint({ fromLanguage, toLanguage, text: debouncedFormText });
+     
+          if (result == null) return; //this will compare if its null or undef . if i do === it doesnt include undef
+
+          setResult(result);
+
+        } catch (error) {
+          console.error('Error:', error);
+        
+        }
+      };
+  
+      fetchData();
+  
+      return () => {}
+      
+    }, [debouncedFormText, fromLanguage]);
+
+    const handleClipBoard = () => {
+      navigator.clipboard.writeText(result)
+    };  
+
+    const handleSpeaker = () => {
+      const utterance = new SpeechSynthesisUtterance(result)
+      utterance.lang = VOICE_FOR_LANGUAGES[toLanguage]
+      utterance.rate = 0.75
+      speechSynthesis.speak(utterance)
+    };
+return (
     <Container fluid className='App'>
       <h1>Google Translate</h1>
 
       <Row>
         <Col>
+        <Stack gap={2}>
           <LanguageSelector  
-          type='from'
+          type={SectionType.From}
           value={fromLanguage}
           onChange={setFromLanguage}/>
-        
+          <TextArea
+            type={SectionType.From}
+            loading={loading}
+            value={formText}
+            onChange={setFormText}
+            />
+         
+        </Stack>
         </Col>
-        <Col>
+        <Col xs='auto'>
           <Button
           disabled={fromLanguage === AUTO_LANGUAGE}
           variant='link'
           onClick={interchangeLanguages}
           >
-            <span className="material-icons">sync_alt</span>
+           <ArrowIcon/>
           </Button>
         </Col>
         <Col> 
+          <Stack gap={2}>
           <LanguageSelector 
-          type='to'
+          type={SectionType.To}
           value={toLanguage}
           onChange={setToLanguage}/>
-          
+          <div style={{position: 'relative'}}>
+            <TextArea
+              type={SectionType.To}
+              loading={loading}
+              value={result}
+              onChange={setResult}
+        
+              />
+            <div style={{position:'absolute', right: 0, bottom: 0, display: 'flex'}}>
+              <Button 
+                variant='link'      
+                onClick={handleClipBoard}>
+                  <ClipBoardIcon/>
+              </Button>
+              <Button 
+                variant='link'      
+                onClick={handleSpeaker}>
+                  <SpeakerIcon/>
+              </Button>
+            </div>
+          </div>
+          </Stack>
         </Col>
       </Row>
      
