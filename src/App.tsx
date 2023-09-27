@@ -9,7 +9,7 @@ import LanguageSelector from './components/LanguageSelector';
 import { SectionType } from './types.d';
 import { ArrowIcon, ClipBoardIcon, SpeakerIcon } from './components/Icons'
 import { TextArea } from './components/TextArea';
-import { endPoint } from './utils/endPoints'
+import { endPoint } from './api/endPoints'
 
 function App() {
   //3. usar el hook useReducer
@@ -62,7 +62,13 @@ function App() {
     };
 return (
     <Container fluid className='App'>
-      <h1>Google Translate</h1>
+      <div className='title-wraper'>
+        <img src="https://www.martindale-avvo.com/wp-content/uploads/2019/08/iStock-1088905934.jpg" alt="" />
+        <div>
+          <h1>Clone Translate</h1>
+        </div>
+
+      </div>
 
       <Row>
         <Col>
