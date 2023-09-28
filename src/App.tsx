@@ -48,7 +48,7 @@ function App() {
   
       return () => {}
       
-    }, [debouncedFormText, fromLanguage]);
+    }, [debouncedFormText, fromLanguage, toLanguage]);
 
     const handleClipBoard = () => {
       navigator.clipboard.writeText(result)
@@ -63,7 +63,7 @@ function App() {
 return (
     <Container fluid className='App'>
       <div className='title-wraper'>
-        <img src="https://www.martindale-avvo.com/wp-content/uploads/2019/08/iStock-1088905934.jpg" alt="" />
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Google_Translate_logo.svg/1024px-Google_Translate_logo.svg.png?20210606111727" alt="" />
         <div>
           <h1>Clone Translate</h1>
         </div>
