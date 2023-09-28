@@ -20,7 +20,7 @@ export const endPoint = async (data: RequestData) => {
   }
 
   try {
-    const response = await fetch(`${process.env.VITE_URL}/translateCloneApp`, requestOptions)
+    const response = await fetch(`${import.meta.env.VITE_URL}/translateCloneApp`, requestOptions)
     const resultsJson = await response.json()
 
     return resultsJson.translation
